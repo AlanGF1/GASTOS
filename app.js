@@ -122,6 +122,26 @@ function loadFromLocalStorage() {
     }
 }
 
+// Auto-clean database: keep current week + 4 previous weeks
+function pruneOldExpenses() {
+    if (state.expenses.length === 0) return;
+
+    const currentMonday = getMonday(new Date());
+    const cutoffMonday = new Date(currentMonday);
+    cutoffMonday.setDate(cutoffMonday.getDate() - (4 * 7)); // Go back exactly 4 weeks (28 days)
+
+    const initialCount = state.expenses.length;
+    state.expenses = state.expenses.filter(exp => {
+        const expDate = parseLocalDate(exp.date);
+        return expDate >= cutoffMonday;
+    });
+
+    if (state.expenses.length !== initialCount) {
+        saveToLocalStorage();
+        console.log(`[Autolimpieza] Se eliminaron ${initialCount - state.expenses.length} gastos antiguos de hace más de 5 semanas.`);
+    }
+}
+
 // Get list of all Monday date strings from the earliest expense (or current week) to the active week
 function getAllWeeksMondays() {
     let earliestDate = new Date();
@@ -551,8 +571,9 @@ document.addEventListener('DOMContentLoaded', () => {
         inputDate.value = formatDateString(new Date());
     }
 
-    // 3. Load DB
+    // 3. Load DB & Auto-clean older weeks
     loadFromLocalStorage();
+    pruneOldExpenses();
 
     // 4. Initialize Theme
     const storedTheme = localStorage.getItem('theme');
