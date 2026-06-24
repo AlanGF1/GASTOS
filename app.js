@@ -338,12 +338,13 @@ function updateUI() {
         statusAlertDesc.innerHTML = `¡Alerta crítica! Has superado el colchón de propina semanal por <strong>$${formatCurrency(over)}</strong>. Esta cantidad será restada de tu presupuesto la siguiente semana.`;
     }
 
-    // 10. Update Quick Cards
-    savingCardVal.innerText = `$${formatCurrency(estimatedQuincenaSavings)}`;
+    // 10. Update Quick Cards (Weekly Savings)
+    const estimatedWeeklySavings = Math.max(0, limitMax - totalWeeklySpent);
+    savingCardVal.innerText = `$${formatCurrency(estimatedWeeklySavings)}`;
     savingCardVal.className = 'card-val highlight';
-    if (estimatedQuincenaSavings <= 0) {
+    if (estimatedWeeklySavings <= 0) {
         savingCardVal.classList.add('critical');
-    } else if (estimatedQuincenaSavings < QUINCENA_BUDGET_FREE * 0.4) {
+    } else if (estimatedWeeklySavings < BASE_WEEKLY_LIMIT * 0.4) {
         savingCardVal.classList.add('warning');
     }
 
