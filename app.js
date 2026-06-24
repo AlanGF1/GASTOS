@@ -347,7 +347,10 @@ function updateUI() {
         savingCardVal.classList.add('warning');
     }
 
-    document.getElementById('txt-accumulated-tips').innerText = `$${formatCurrency(totalTipsSaved)}`;
+    const tipsElem = document.getElementById('txt-accumulated-tips');
+    if (tipsElem) {
+        tipsElem.innerText = `$${formatCurrency(totalTipsSaved)}`;
+    }
 
     // 11. Render Transaction List
     const listContainer = document.getElementById('expense-list-container');
